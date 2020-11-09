@@ -1,0 +1,374 @@
+
+<title>Booking Call Services</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" id="metaViewport" content="user-scalable=no, initial-scale=0.8, width=device-width, viewport-fit=cover" data-tdv-general-scale="0.5"/>
+<link rel="icon" href="images/favicon.ico" />
+
+<head>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.login-page {
+  width: 360px;
+  padding: 4% 0 0;
+  margin: auto;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #000000;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #676767;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.form .message a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+.form .register-form {
+  display: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.container:before, .container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.container .info {
+  margin: 50px auto;
+  text-align: center;
+}
+.container .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 300;
+  color: #1a1a1a;
+}
+.container .info span {
+  color: #4d4d4d;
+  font-size: 12px;
+}
+.container .info span a {
+  color: #000000;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #EF3B3A;
+}
+body {
+  background: #000000; /* fallback for old browsers */
+}
+
+.login {
+	display: none;
+}
+.waiting {
+	display: none;
+}
+.closed {
+	display: none;
+}
+.vmix {
+	position:fixed; 
+	top:0; 
+	left:0; 
+	bottom:0; 
+	right:0; 
+	width:100%; 
+	height:100%; 
+	border:none; 
+	margin:0; 
+	padding:0; 
+	overflow:hidden; 
+	z-index:999999;
+	display: block;
+	
+}
+
+.text  {
+	font-family: monospace;
+	}
+</style>
+</head>
+<body id="body" >
+<audio id="audio"> <source src="sounds/click2.mp3" type="audio/ogg" /></audio>
+<div class="login" id="login">
+	<div class="login-page">
+		<div align="center"> <img src="images/lsp.jpg" alt="" width="50%"></div>
+		<div class="form">
+			<div class="login-form" method="post">
+				<input id="nome" type="text" placeholder="Name" required />
+				<input id="cognome" type="text" placeholder="Surname" required />
+				<button onclick="validateuser();">Book your call</button>
+			</div>								
+			<div class="login-form" method="post">
+				<h3 class="text" >The call requires Chrome on Windows, iOS, Android devices.<h3>
+				<h3 class="text" style="color:red;">For iOS only Safari will work, Chrome for iOS is not supported.<h3>
+				<h3 class="text" >Be sure to enable permissions to use the camera and microphone.<h3>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="waiting" id="waiting">
+	<div  class="login-page">
+		<div align="center"> <img src="images/lsp.jpg" alt="" width="50%"></div>
+		<div class="form">
+			<div class="login-form" method="post">
+				<h3 class="text" >You are waiting to connect us with the event<h3>
+				<img src="images/loader.gif" alt="" width="50%">
+				<h4 class="text"><small>Access Token: </small></h4>
+				<button onclick="eliminateuser();">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="closed" id="closed">
+	<div  class="login-page">
+	<div align="center"> <img src="images/lsp.jpg" alt="" width="50%"></div>
+	<div class="form">
+		<div class="login-form" method="post">
+			<h2 class="text">The Q&A session has ended<h2>
+		</div>
+	</div>
+	</div>
+</div>
+
+<div id="vmixviewer" align="center" style="display:none;">
+<img src="images/bg.png" alt="" width="100%" style=";z-index:10; max-height: 100%; max-width: 100%; width: 100%; height: 100%;  -moz-user-select: -moz-none;   -khtml-user-select: none;   -webkit-user-select: none;   -ms-user-select: none;   user-select: none;">	
+	<iframe id="vmix" class="vmix" src=""  style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:-1;" allow="camera;microphone" allowtransparency="true" >
+		Your browser doesn't support iframes
+	</iframe>
+<!--	<img id="BW" 		onclick="CueClick('BW');"		style="		display: block;		bottom: 2%;		left: 2%;		position: absolute;		width: 15%;		z-index:11;		" src="images/BW.png" alt="" >
+	<img id="FW"		onclick="CueClick('FW');"		style="    		display: block;		bottom: 2%;		right: 2%;		position: absolute;		width: 15%;		z-index:11;		" src="images/FW.png" alt="" >
+	<img id="BWClick"		style="		display: none;		bottom: 2%;		left: 2%;		position: absolute;		width: 15%;		" src="images/BWClick.png" alt="" >	
+	<img id="FWClick"		style="    		display: none;		bottom: 2%;		right: 2%;		position: absolute;		width: 15%;		" src="images/FWClick.png" alt="" >		-->
+</div>
+
+<script src="assets/js/jquery.min.js" type="text/javascript"></script>
+<script>
+	var elem = document.getElementById("body");	
+	var eventid = 'e5e6146a9f3e';
+	var eventname = 'Test';
+	var eventcode='88990020';
+	var exist = '0';
+	var token='qzf2364g0j0j';
+	var session='';
+	
+	var callername = '';
+	var callersurname = '';
+	
+	var audioplay = document.getElementById('audio');
+	if (exist == 1	) {	
+		document.getElementById("login").style.display = "none";
+		document.getElementById("waiting").style.display = "block";
+		attesa();
+	} else {
+		document.getElementById("login").style.display = "block";
+		document.getElementById("waiting").style.display = "none";
+	}
+
+	function validateuser() {
+		var errore = false;
+		callername = document.getElementById("nome").value;
+		callersurname = document.getElementById("cognome").value;
+		if (callername == '') {var errore = true};
+		if (callersurname == '') {var errore = true};
+		if (errore != true) {prenota();}   
+	}
+
+	function eliminateuser() {
+		clearInterval(attesa);
+		$.ajax({
+			url: "delete.php?token=" + session,
+			type: "POST",
+			cache: false,		
+			success: function (result) {
+				document.getElementById("login").style.display = "block";
+				document.getElementById("waiting").style.display = "none";
+			}
+		}) 	
+	}
+
+	function prenota() {	
+		$.ajax({
+			url: "prenota.php?token=" + token + "&eventid=" + eventid + "&callername=" + callername + "&callersurname=" + callersurname + "&session=" + session,
+			type: "POST",
+			cache: false,		
+			success: function (result) {
+				//setInterval(function(){$.post('session.php'); console.log('')},1000); 
+				document.getElementById("login").style.display = "none";
+				document.getElementById("waiting").style.display = "block";
+				openFullscreen();
+				attesa();
+			}
+		})   
+	}
+
+	function attesa() {
+		var attesa = setInterval(function(){ 
+			$.ajax({
+				url: "get_status.php?eventid=e5e6146a9f3e&session=" + session,
+				type: "POST",
+				cache: false,		
+				success: function (result) {	
+					
+					if (result == false ){
+							console.log('result: ' + result)
+							document.getElementById('vmix').src == '';
+							document.getElementById("vmixviewer").style.display = "none";
+							document.getElementById("waiting").style.display = "none";
+							document.getElementById("closed").style.display = "none";
+							document.getElementById("login").style.display = "block";
+							clearInterval(attesa);
+					
+					};
+					JSON.stringify(result);				
+					//var JSONvmixpassword = result.code;
+					var JSONsessione = result.session;
+					var JSONstatus = result.status;
+					
+					if (JSONsessione == session) {				
+						
+						if (JSONstatus == 'O') {
+							var IFrame = 'https://www.vmixcall.com/call.aspx?Key=' + eventcode + '&Name=' + callername + '+' + callersurname;
+							if (document.getElementById('vmix').src != IFrame ) {document.getElementById('vmix').src = IFrame;}
+								document.getElementById("login").style.display = "none";
+								document.getElementById("waiting").style.display = "none";
+								
+								//document.getElementById("vmix").style.display = "block";
+								document.getElementById("vmixviewer").style.display = "block";
+								document.getElementById("closed").style.display = "none";
+							//}
+						} else if (JSONstatus == 'C') {
+							document.getElementById('vmix').src == '';
+							//document.getElementById("vmix").style.display = "none";
+							document.getElementById("vmixviewer").style.display = "none";
+							document.getElementById("waiting").style.display = "none";
+							document.getElementById("closed").style.display = "block";
+							//clearInterval(attesa);
+							
+						}else if  (JSONstatus == 'W') {	
+							document.getElementById('vmix').src == '';
+							//document.getElementById("vmix").style.display = "none";
+							document.getElementById("vmixviewer").style.display = "none";
+							document.getElementById("waiting").style.display = "block";
+							document.getElementById("closed").style.display = "none";
+							document.getElementById("login").style.display = "none";
+							//clearInterval(attesa);
+						}														
+			
+					}
+					//console.clear();
+					console.log(JSONstatus);
+					
+					
+				}
+				
+			}) 
+		
+		}, 5000);
+	}
+	
+</script>	
+
+<script>
+	
+	function CueClick(CueAction) {
+		audioplay.play();
+		if (CueAction == 'BW') {
+			
+			document.getElementById("BW").style.display = "none";
+			document.getElementById("BWClick").style.display = "block";
+			setTimeout(function(){ 
+				document.getElementById("BW").style.display = "block";
+				document.getElementById("BWClick").style.display = "none";
+			},200);
+			$.ajax({
+				url: "set_statusminus.php?callid=" + callid + "&token=" + session,
+				type: "POST",
+				cache: false,		
+				success: function (result) {}
+			});
+
+			
+		} else {
+			
+			document.getElementById("FW").style.display = "none";
+			document.getElementById("FWClick").style.display = "block";
+			setTimeout(function(){ 
+				document.getElementById("FW").style.display = "block";
+				document.getElementById("FWClick").style.display = "none";
+			},200);	
+			$.ajax({
+				url: "set_statusplus.php?callid=" + callid + "&token=" + session,
+				type: "POST",
+				cache: false,		
+				success: function (result) {}
+			});			
+		}
+	
+}	
+
+function openFullscreen() {
+
+
+	if (elem.requestFullscreen) {
+		elem.requestFullscreen();
+		} else if (elem.mozRequestFullScreen) { /* Firefox */
+		elem.mozRequestFullScreen();
+		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+		elem.webkitRequestFullscreen();
+		} else if (elem.msRequestFullscreen) { /* IE/Edge */
+		elem.msRequestFullscreen();
+	}		
+	
+}
+//$('body').on('dragstart drop', function(e){
+//    e.preventDefault();
+//    return false;
+//});
+</script>
+
+</body>
