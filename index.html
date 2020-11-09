@@ -1,0 +1,575 @@
+
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>VMix Call Manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" id="metaViewport" content="user-scalable=no, initial-scale=0.7, height=device-height, viewport-fit=cover" data-tdv-general-scale="0.5"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="favicon.ico" href="data:image/x-icon;," type="image/x-icon"> 
+<link rel="icon" type="image/png" href="favicon.ico">
+<link rel="stylesheet" href="main.css">
+<script type="text/javascript" src="assets/js/qrcode.js"></script>
+<style>
+/* Float cancel and delete buttons and add an equal width */
+.cancelbtn, .deletebtn {
+  float: left;
+  width: 50%;
+  
+      height: 40px;
+}
+
+/* Add a color to the cancel button */
+.cancelbtn {
+  background-color: #ccc;
+  color: black;
+}
+
+/* Add a color to the delete button */
+.deletebtn {
+  background-color: #f44336;
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: #474e5d;
+  padding-top: 50px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+}
+
+/* Style the horizontal ruler */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+ 
+/* The Modal Close Button (x) */
+.close {
+  position: absolute;
+  right: 35px;
+  top: 15px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #f1f1f1;
+}
+
+.close:hover,
+.close:focus {
+  color: #f44336;
+  cursor: pointer;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Change styles for cancel button and delete button on extra small screens */
+@media screen and (max-width: 300px) {
+  .cancelbtn, .deletebtn {
+     width: 100%;
+  }
+}
+.maincontainer {
+  padding: 16px;
+  text-align: center;
+  color: #000000;
+}
+
+
+#table-wrapper {
+  position:relative;
+ 
+} 
+#table-scroll {
+	height: 570px;
+    width: 624px; 
+    overflow: auto;
+    margin-top: 0px;
+    font-size: 12px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td {
+    border: 1px solid #000000; 
+    text-align: left;
+    padding: 8px;
+    width: 30%;
+    background-color: transparent;
+    color: white;
+}
+
+th {
+     border: 1px solid #000000;
+    text-align: left;
+    padding: 0px;
+    width: 3%;
+    background-color: transparent;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #525b7d;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #525b7d; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ffffff; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #11a8ab; 
+}
+
+.tooltip {
+  position: relative;
+  #display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.qrcode {
+
+	margin-left: 50px;
+    background-position: center;
+    z-index: 1;
+    background-color: transparent;
+}
+</style>
+</head>
+<body>
+
+
+<div class="main-container">
+
+
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">X</span>
+  <div class="modal-content" >
+    <div class="maincontainer">
+		
+		<h1 style="color: #000000">Delete Event</h1>
+		<p style="color: #000000">Are you sure you want to delete this Event?</p>
+    
+      <div class="clearfix">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+		<form method="post">
+			<input id="eventodelete"   name="eventodelete"  type="text" hidden >
+			<button name="btn-eventodelete" type="submit" onclick="document.getElementById('id01').style.display='none'" class="deletebtn">Delete</button>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>	
+		
+		
+	
+
+            <!-- HEADER -->
+            <header class="block">
+                <ul class="header-menu horizontal-list">
+                    <li>
+					<img style="
+						position: fixed;
+						top: 20%;
+						left: 10px;
+						display: inline;
+						" src="images/vMix-call-Logo-Black.png" alt="" width="200px"></img>
+                    <p 	style="
+						position: inherit;
+						/* top: 17%; */
+						color: #2b71b0;
+						left: 106%;
+						display: inline;
+						font-family: fantasy;
+						font-size: 22px;
+						" class="header-menu-tab" >MANAGER v1.0</p>
+                    </li>
+
+                </ul>
+                <div class="profile-menu">
+                    <p>Mko13@o2.pl</p>
+                    <div class="profile-picture small-profile-picture">
+                        <img onclick="window.location = 'logout.php';" width="40px" alt="" src="images/close.ico">
+                    </div>
+                </div>
+            </header>
+
+            <!-- LEFT-CONTAINER -->
+            <div class="left-container container">
+                <div class="menu-box1 block"> <!-- MENU BOX (LEFT-CONTAINER) -->
+                    <h2 class="titular">CALL MANAGER</h2>
+                    <ul class="menu-box-menu">
+						
+                        <li ><a onclick="
+							enablePolling = 0;
+							document.getElementById('CALLSLIST').style.display = 'block';
+							document.getElementById('CALLSBOOKED').style.display='none';
+							document.getElementById('CUE').style.display='none';
+							document.getElementById('CALLINFO').style.display = 'none';
+							document.getElementById('ADDEVENT').style.display = 'none';
+						"  style="cursor: pointer;" class="menu-box-tab" ><span class="icon entypo-calendar scnd-font-color"></span>Managed Calls<div class="menu-box-number">0</div></a></li>
+					    <br><li><a onclick="
+							
+							document.getElementById('ADDEVENT').style.display = 'block';
+							document.getElementById('CALLSLIST').style.display = 'none';
+							document.getElementById('CALLINFO').style.display = 'none';
+							document.getElementById('CALLSBOOKED').style.display = 'none';
+							document.getElementById('CUE').style.display='none';
+						" class="sign-in button" >Add Call</a></span></li>
+					</ul>
+                </div>		
+				
+				<div class="menu-box5 block" id="ADDEVENT" style="display: none;"> <!-- MENU BOX (LEFT-CONTAINER) -->
+                    <h2 class="titular">Add Call</h2>
+					<br>
+					<form method="post">
+						<div class="input-container">
+							<input type="text" placeholder="Call Name" name="calltoadd" class="email text-input" required>
+							<input type="text" placeholder="VMIX Call Password" name="callpassowordtoadd" class="text text-input" required>  
+						</div>
+						<button class="sign-in button" type="submit" name="btn-addevent">Add</button>
+					</form>
+					<span> <a onclick="
+						document.getElementById('ADDEVENT').style.display = 'none';					
+					" class="subscribe button" >Cancel</a>
+				</div>		
+				
+				
+                <div class="menu-box block" id="CALLSLIST" style="display: none;"> <!-- MENU BOX (LEFT-CONTAINER) -->
+                    <h2 class="titular">CALLS</h2>
+                    <ul class="menu-box-menu" style="cursor: pointer;">
+												<li><a class="menu-box-tab" value="0">&nbsp;&nbsp;No Calls found</a></li>
+						
+                    </ul>
+                </div>			
+
+                <div class="menu-box6 block" id="CALLINFO" style="display: none;">
+                    <h2 class="titular">CALL INFO</h2>
+					<p id="INFOCALLNAME" ></p>
+					<p id="INFOCALLPASSWORD" ></p>
+					<p id="INFOCALLID" ></p>
+					<p id="CLIENTLINK" ></p>
+					<br>
+					<p>&nbsp;&nbsp;QR Code:</p>
+					<br>
+					<div  class="qrcode" id="qrcode" width="100%" ></div>
+
+                </div>	
+				</div>
+
+            <!-- MIDDLE-CONTAINER -->
+           
+
+            <!-- MIDDLE-CONTAINER -->
+            <div class="middle-container container">
+			
+	                <div class="menu-action block" id="CALLSBOOKED" style="display: none;">
+                   <h2  id="TABLEROWCOUNT" class="titular" >CALLS BOOKED</h2>
+					
+                    <ul class="menu-box-menu">
+					<div class="form">
+						<div class="login-form">
+							<div id="table-wrapper">
+								<div id="table-scroll">								
+									<div id="live_data"></div>	
+								</div>
+							</div>
+						</div>
+					</div>
+                    </ul>
+                </div>				
+			
+	            <div class="menu-action1 block" id="CUE" style="display: none;">
+                    <h2 class="titular">Virtual Cue Light</h2>
+                    <ul class="menu-box-menu">
+					
+					<img id="BWClick"
+						onclick ="cue('BWClick');"
+						style="    
+						width: 150px;
+						position: absolute;
+						margin-left: 161px;
+						margin-top: 24px;
+						" src="images/BWClick.png" alt="" >		
+
+					<img id="FWClick"
+						onclick ="cue('FWClick');"
+						style="    
+						position: absolute;
+						width: 150px;
+						margin-left: 307px;
+						margin-top: 24px;
+						" src="images/FWClick.png" alt="" >		
+
+                    </ul>
+                </div>			
+
+            <!-- RIGHT-CONTAINER -->
+         
+        </div> <!-- end main-container -->	
+		
+
+
+<script src="assets/js/jquery.min.js" type="text/javascript"></script>
+<script>
+//console.log(' href => ' + window.location.href);
+//console.log(' host => ' + window.location.host);
+//console.log(' hostname => ' + window.location.hostname);
+//console.log(' port => ' + window.location.port);
+//console.log(' protocol => ' + window.location.protocol);
+//console.log(' pathname => ' + window.location.pathname);
+//console.log(' hashpathname => ' + window.location.hash);
+//console.log(' search=> ' + window.location.search);
+	var a=new AudioContext()
+	var host = window.location.host;
+	var token;
+	var eventid;
+	var eventname;
+	var eventcode;
+	
+	
+	
+	function selecevent(id) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {	
+			var parametri = JSON.parse(xhttp.responseText);				
+			JSON.stringify(parametri);
+			//console.log(parametri.id);
+			//console.log(parametri.callname);
+			//console.log(parametri.callpassword);
+			//console.log(parametri.creationdate);
+			//console.log(parametri.token);
+			//console.log(parametri.eventid);
+			
+			token = parametri.token;	
+			eventname = parametri.eventname;
+			eventid = parametri.eventid;
+			eventcode = parametri.eventpassword;
+			
+			document.getElementById('INFOCALLNAME').innerHTML = '&nbsp;&nbsp;Call Name : ' + eventname;
+			document.getElementById('INFOCALLPASSWORD').innerHTML = '&nbsp;&nbsp;Call Password : '  +  eventcode;
+			document.getElementById('INFOCALLID').innerHTML = '&nbsp;&nbsp;ID : '  +  eventid;
+			URLink ='https://' + host + '/book.php?token=' + parametri.token + '&eventid=' + eventid;
+			document.getElementById('CLIENTLINK').innerHTML =  '&nbsp;&nbsp;Client Link : <a href="' + URLink  + '">Link</a>';
+
+
+			document.getElementById("qrcode").innerHTML = '';
+			var qrcode = new QRCode(document.getElementById("qrcode"), {
+				width : 200,
+				height : 200
+			});
+			function makeCode () {		
+				qrcode.makeCode(URLink);
+			}
+			makeCode();
+
+
+					
+			eventid = parametri.eventid;
+			readlist_oneshot();
+			enablePolling = 1;
+			listupdate = setInterval(checkstatus,5000);
+		}
+	};
+	xhttp.open("POST", "get_call_info.php?id=" + id, true);
+	xhttp.send();
+	}
+</script> 
+<script>
+	var enablePolling = 0;
+	var cuecounter = 0; 
+	var cuecounterold = 0;
+	var checkstatus = function(){
+		if (enablePolling == 0){ clearInterval(listupdate);};
+		if (document.getElementById('live_data').innerHTML.length == 0){ document.getElementById('TABLEROWCOUNT').innerHTML = 'CALLS BOOKED (0)';};
+		$.ajax({  
+			url:"listqueue.php?eventid=" + eventid, 
+			method:"POST",  
+			success:function(data){  
+				$('#live_data').html(data);  
+					if (data != '' ){	
+						document.getElementById('TABLEROWCOUNT').innerHTML = 'CALLS BOOKED (' + (document.getElementById('table').rows.length - 1) + ')';
+						cuecounter = document.getElementById('cuelight').innerHTML;
+						//console.log(cuecounter);
+						if (cuecounter != 0) {
+							if (cuecounter > cuecounterold) { 				
+								cuecounterold = cuecounter; 
+								cue('FWClick');
+							} else if (cuecounter < cuecounterold) { 		
+								cuecounterold = cuecounter;
+								cue('BWClick');
+							};
+						};
+					}
+			}  
+		}); 
+		
+	};
+	
+	function readlist_oneshot() {	
+		if (document.getElementById('live_data').innerHTML.length == 0){ document.getElementById('TABLEROWCOUNT').innerHTML = 'CALLS BOOKED (0)';};
+		$.ajax({  
+			url:"listqueue.php?eventid=" + eventid,  
+			method:"POST",  
+			success:function(data){  
+				$('#live_data').html(data); 
+				if (data != '' ){	
+					document.getElementById('TABLEROWCOUNT').innerHTML = 'CALLS BOOKED (' + (document.getElementById('table').rows.length - 1) + ')';
+					cuecounter = document.getElementById('cuelight').innerHTML;
+				}
+			}  
+		}); 
+	
+	
+	} 	
+
+
+</script>	
+<script>	
+	$(document).on('click', '.button_W', function(){ 
+	
+	var val = $(this).val();
+		$.ajax({  
+			url:"set_status.php?token=" + token + "&eventid=" + eventid + "&id=" + val + "&action=W",  
+			method:"POST", 
+			success:function(data){  
+				readlist_oneshot();
+			} 
+		}); 
+	}); 
+	
+	$(document).on('click', '.button_o', function(){ 
+		
+		var val = $(this).val();
+			$.ajax({  
+				url:"set_status.php?token=" + token + "&eventid=" + eventid + "&id=" + val + "&action=O",  
+				method:"POST", 
+				success:function(data){  
+					readlist_oneshot();
+				}  
+			}); 
+	});  
+	
+	$(document).on('click', '.button_C', function(){  
+	
+	var val = $(this).val();
+		$.ajax({  
+			url:"set_status.php?token=" + token + "&eventid=" + eventid + "&id=" + val + "&action=C",  
+			method:"POST",
+			success:function(data){  
+				readlist_oneshot();
+			} 
+		}); 
+	});  
+	
+	$(document).on('click', '.button_d', function(){  		
+	
+	var val = $(this).val();
+		$.ajax({  
+			url:"set_status.php?token=" + token + "&eventid=" + eventid + "&id=" + val + "&action=D",  
+			method:"POST",
+			success:function(data){  
+				readlist_oneshot();  
+			} 
+		}); 
+	}); 
+	
+</script>	
+<script>
+	function cue(action) {	
+	//	var oldImage = document.getElementById(action).src;
+	//	if (action == 'BWClick') {			
+	//		document.getElementById(action).src = "images/BW.png";
+	//		self.beep(100, 320, 100);	
+	//	} else {	
+	//		document.getElementById(action).src = "images/FW.png";
+	//		self.beep(100, 520, 100);
+	//	}
+	//	setTimeout(function(){ document.getElementById(action).src = oldImage;}, 600);	
+	} 
+	
+	function beep(vol, freq, duration){
+		v=a.createOscillator()
+		u=a.createGain()
+		v.connect(u)
+		v.frequency.value=freq
+		v.type="square"
+		u.connect(a.destination)
+		u.gain.value=vol*0.01
+		v.start(a.currentTime)
+		v.stop(a.currentTime+duration*0.001)
+	}
+
+</script>
+</body>
+
+</html>
